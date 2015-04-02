@@ -1,0 +1,20 @@
+<h1>Attribute#get</h1>
+<p>Find me in app/views/attribute/get.html.erb</p>
+
+
+<%= form_tag({controller: :attribute, action: :get}, method: "post") do %>
+  <%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name, "glacier") %>
+  <%= label_tag(:item_name, "Item Name:") %>
+  <%= text_field_tag(:item_name, "sampleItem") %>
+
+  <%= submit_tag("Submit") %>
+<% end %>
+
+
+<% if @result != "error" %>
+great
+<% @result.attributes.each do |att|  %>
+	<%= att.name %>&nbsp;<%= att.value %>
+<% end -%>
+<% end -%>

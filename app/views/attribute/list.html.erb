@@ -1,0 +1,31 @@
+<h1>Attribute#list</h1>
+<p>Find me in app/views/attribute/list.html.erb</p>
+
+<% @list_attributes.items.each do |item| %>
+	Name <%= item.name %>
+	<br />
+	<% item.attributes.each do |att| %>
+		<%= att.name.to_s %> - <%= att.value.to_s %> 
+		<br />
+	<% end %>
+	<br />
+	<br />
+	
+<% end %>
+
+
+<table border="1" class="table table-striped">
+ <tr>
+ 	<th></th>
+ 	<th>..</th>
+ 	<th>..</th>
+</tr>
+<% @list_attributes.items.each do |item| %>
+<tr>
+	<td><%=item.name %></td>
+	<td>  </td>
+	<td>
+	</td>
+</tr>
+<% end %>
+</table> 

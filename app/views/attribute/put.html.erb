@@ -1,0 +1,55 @@
+<h1>Attribute#put</h1>
+<p>Find me in app/views/attribute/put.html.erb</p>
+
+
+<%= form_tag({controller: :attribute, action: :put}, {id: "add_item_form", method: "post"}) do %>
+
+	<%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name, @domain_name) %>
+  <br />
+--------------
+<br />
+  <div id="item_1" >
+  <%= label_tag("item_name[0]", "Item name:") %>
+  <input type="textbox" name="item_name[0]" value="default_item_name" >
+  <br />
+  <%= label_tag("attributes[0][name]", "Attribute name:") %>
+  <input type="textbox" name="attributes[0][name]" value="default_attr_name" >
+  <br />
+  <%= label_tag("attributes[0][value]", "Attribute value:") %>
+  <input type="textbox" name="attributes[0][value]" value="default_attr_value" >
+  <br />
+  <%= label_tag("attributes[0][replace]", "Replace:") %>
+  <%= check_box_tag 'attributes[0][replace]', 'true', true %>
+</div>
+
+
+<br />
+	<%= submit_tag("Submit") %>
+<% end %>
+
+<button id="btn_add_new_attr" data-attr-number=0  > Add new Attribute</button>
+
+<script>
+$( document ).ready(function() {
+    $('#add_item_form').submit(function()
+	{
+		var item_attribute_name_content = $("#item_attribute_name").val();
+        //$("#item_attribute_value").attr("name","attributes["+ item_attribute_name_content +"]");
+        //$("#item_attribute_name").remove();
+	});
+    $('#btn_add_new_attr').click(function()
+      {
+       var current_attr_number = $('#btn_add_new_attr').data("attrNumber");
+       $('input[name="attributes['+current_attr_number+'][replace]"]').after("test");
+
+
+        $('#btn_add_new_attr').data("attrNumber",current_attr_number+1);
+        console.log(current_attr_number);
+
+      });
+
+
+});
+
+</script>

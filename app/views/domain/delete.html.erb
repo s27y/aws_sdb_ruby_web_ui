@@ -1,0 +1,9 @@
+<h1>Domain#delete</h1>
+<p>Find me in app/views/domain/delete.html.erb</p><p> <%= @message %></p>
+
+<%= form_tag({controller: :domain, action: :delete}, method: "post") do %>
+  <%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name) %>
+
+  <%= submit_tag("Submit") %>
+<% end %>
