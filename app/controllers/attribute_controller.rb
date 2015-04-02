@@ -151,6 +151,10 @@ def list
 
         @domain_name = params[:domain_name]
 
+        if !@domain_name
+            @domain_name = "glacier"
+        end
+
         if !check_seesion
             redirect_to controller: :home, action: :index
         else
