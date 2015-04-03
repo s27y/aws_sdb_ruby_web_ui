@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   #   resources :products
 
   resources :item
+  resources :new_item
 
   # Example resource route with options:
   #   resources :products do

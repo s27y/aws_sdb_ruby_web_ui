@@ -140,7 +140,7 @@ def select
     render :text => @domain_name
 end
 
-def list
+    def list
     if !params[:max_number_of_row]
             @max_number_of_row = 100
         else
@@ -162,12 +162,40 @@ def list
                 :access_key_id => @aws_key_id,
                 :secret_access_key => @aws_key,
                 :region => 'eu-west-1')
-            @list_attributes = list_attributes(@simpledb, @domain_name, 10)
-            
-        end
-end
+            @list_items = list_items(@simpledb, @domain_name, 10)
 
-    def list_attributes(sdb, domain_name="glacier", max_number_of_attributes=100, next_page_token="")
+        @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
+
+
+        @item_obj_array = Array.new
+        @list_items.items.each do |item|
+            @item = NewItem.new(item.name)
+            #add all possible attributes name to the new created item
+            @all_attributes_names.each do |name|
+                @item.add_attribute(name, "")
+            end
+            #add all attributes the item realy have
+            item.attributes.each do |att|
+                @item.add_attribute(att.name.to_s, att.value.to_s)
+            end
+            @item_obj_array.push(@item)
+        end
+
+        end
+    end
+    
+
+
+    def get_uniq_attribute_names_from_items(list_items)
+        @attr_names= Array.new
+
+        list_items.items.each do |item|
+            @attr_names <<  ((item.attributes.collect{ |ele| ele.name}).uniq)
+        end
+        @attr_names.flatten!.uniq!
+    end
+
+    def list_items(sdb, domain_name="glacier", max_number_of_attributes=100, next_page_token="")
         begin
             @resp = sdb.select(
                     select_expression: "select * from #{domain_name} limit #{max_number_of_attributes}",
@@ -175,6 +203,8 @@ end
                     consistent_read: true,)
                 #TODO need catch exception here
         end
+
+
         @resp
     end
 

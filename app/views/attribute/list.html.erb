@@ -1,31 +1,43 @@
 <h1>Attribute#list</h1>
 <p>Find me in app/views/attribute/list.html.erb</p>
 
-<% @list_attributes.items.each do |item| %>
-	Name <%= item.name %>
-	<br />
-	<% item.attributes.each do |att| %>
-		<%= att.name.to_s %> - <%= att.value.to_s %> 
-		<br />
-	<% end %>
-	<br />
-	<br />
-	
+<% @list_items.items.each do |item| %>
+Name <%= item.name %>
+<br />
+<% item.attributes.each do |att| %>
+<%= att.name.to_s %> - <%= att.value.to_s %> 
+<br />
+<% end %>
+
 <% end %>
 
 <h1><%= @domain_name %> </h1>
-<table border="1" class="table table-striped">
- <tr>
- 	<th></th>
- 	<th>..</th>
- 	<th>..</th>
-</tr>
-<% @list_attributes.items.each do |item| %>
-<tr>
-	<td><%=item.name %></td>
-	<td>  </td>
-	<td>
-	</td>
-</tr>
-<% end %>
-</table> 
+<table border="1">
+	<thead>
+		<tr>
+			<th>Item Name</th>
+			<% @all_attributes_names.each do |att_name| %>
+			<th><%= att_name %></th>
+			<% end -%>
+		</tr>
+	</thead>
+	<tbody>
+		<% @item_obj_array.each do |item_obj| %>
+			<tr>
+				<td><%= item_obj.item_name %> </td>
+				<% @all_attributes_names.each do |att_name| %>
+					<td><%=  item_obj.attributes_hash[att_name.intern]%></td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+
+
+</table>
+
+<script type="text/javascript">	
+
+
+</script>
+
+

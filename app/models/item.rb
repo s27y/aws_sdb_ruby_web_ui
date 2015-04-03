@@ -10,6 +10,10 @@ class Item
   		@attributes_array.push(Hash[hash.map {|k, v| [k.intern, v] }])
   	end
 
+  	def add_single_attribute(att_name, att_value)
+		@attributes_array.push(Hash[att_name.intern => att_value])
+  	end
+
   	def to_aws_hash
   		attr_array = Array.new
   		@attributes.each do |ele|
@@ -32,3 +36,4 @@ class Item
   		result
   	end
 end
+
