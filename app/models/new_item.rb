@@ -10,6 +10,11 @@ class NewItem
 		@attributes_hash[att_name.intern] = att_value
   	end
 
+
+    def get_attribute_by_name(att_name)
+    @attributes_hash[att_name.intern].to_s
+    end
+
   	def to_s
   		result = String.new
   		result << "Name: " <<@item_name <<"\n."

@@ -22,7 +22,13 @@ class AttributeController < ApplicationController
                 :access_key_id => @aws_key_id,
                 :secret_access_key => @aws_key,
                 :region => 'eu-west-1')
-            @result = get_attributes(@simpledb, @domain_name, @item_name)
+            # @result = get_attributes(@simpledb, @domain_name, @item_name)
+            @list_items = list_items(@simpledb, @domain_name, 100, ""," itemName() = '#{@item_name}'")
+
+
+            
+            @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
+            @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
         end
 
     end
@@ -148,10 +154,18 @@ end
         end
 
         @next_page_token = params[:next_page_token]
+        if !@next_page_token
+            @next_page_token = ""
+        end
 
-        @domain_name = params[:domain_name]
+        @domain_name = params[:domain_name] 
 
-        if !@domain_name
+        @max_number_of_items = params[:max_number_of_items]
+        if !@max_number_of_items ||@max_number_of_items == ""
+            @max_number_of_items = 100
+        end
+
+        if !@domain_name ||@domain_name.size<1
             @domain_name = "glacier"
         end
 
@@ -162,26 +176,37 @@ end
                 :access_key_id => @aws_key_id,
                 :secret_access_key => @aws_key,
                 :region => 'eu-west-1')
-            @list_items = list_items(@simpledb, @domain_name, 10)
+            @list_items = list_items(@simpledb, @domain_name, @max_number_of_items, @next_page_token)
 
+        #make sure there is items in the domain
+        if @list_items.items.size == 0
+            return
+        end
         @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
+        @next_page_token = @list_items.next_token
 
+        @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
 
+        end
+    end
+
+    def format_request_to_obj(all_attr_names, items)
         @item_obj_array = Array.new
-        @list_items.items.each do |item|
+        items.each do |item|
             @item = NewItem.new(item.name)
+
             #add all possible attributes name to the new created item
-            @all_attributes_names.each do |name|
+            all_attr_names.each do |name|
                 @item.add_attribute(name, "")
             end
-            #add all attributes the item realy have
+            #add all attributes the item really have
             item.attributes.each do |att|
-                @item.add_attribute(att.name.to_s, att.value.to_s)
+                @whith_space =  @item.get_attribute_by_name(att.name.to_s).size>0 ? "\n" : "" 
+                @item.add_attribute(att.name.to_s, @item.get_attribute_by_name(att.name.to_s)+@whith_space+att.value.to_s)
             end
             @item_obj_array.push(@item)
         end
-
-        end
+        return @item_obj_array
     end
     
 
@@ -192,18 +217,30 @@ end
         list_items.items.each do |item|
             @attr_names <<  ((item.attributes.collect{ |ele| ele.name}).uniq)
         end
-        @attr_names.flatten!.uniq!
+
+        if @attr_names && @attr_names.flatten.size >0
+            @attr_names.flatten!.uniq!
+        end
+        @attr_names
     end
 
-    def list_items(sdb, domain_name="glacier", max_number_of_attributes=100, next_page_token="")
+    def list_items(sdb, domain_name, max_number_of_items=100, next_page_token="",where_statement=nil)
+
         begin
+            if where_statement
             @resp = sdb.select(
-                    select_expression: "select * from #{domain_name} limit #{max_number_of_attributes}",
+                    select_expression: "select * from #{domain_name} where #{where_statement} limit #{max_number_of_items}",
                     next_token: next_page_token,
                     consistent_read: true,)
+            else
+                @resp = sdb.select(
+                    select_expression: "select * from #{domain_name} limit #{max_number_of_items}",
+                    next_token: next_page_token,
+                    consistent_read: true,)
+            end
                 #TODO need catch exception here
         end
-
+        #select * from mydomain where attr1 = 'He said, "That''s the ticket!"'  select * from mydomain where attr1 = "He said, ""That's the ticket!"""
 
         @resp
     end

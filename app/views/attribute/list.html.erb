@@ -12,6 +12,7 @@ Name <%= item.name %>
 <% end %>
 
 <h1><%= @domain_name %> </h1>
+<% if @list_items.items.size != 0 %>
 <table border="1">
 	<thead>
 		<tr>
@@ -23,17 +24,25 @@ Name <%= item.name %>
 	</thead>
 	<tbody>
 		<% @item_obj_array.each do |item_obj| %>
-			<tr>
-				<td><%= item_obj.item_name %> </td>
-				<% @all_attributes_names.each do |att_name| %>
-					<td><%=  item_obj.attributes_hash[att_name.intern]%></td>
-				<% end %>
-			</tr>
+		<tr>
+			<td><%= item_obj.item_name %> </td>
+			<% @all_attributes_names.each do |att_name| %>
+			<td><%= simple_format (h item_obj.attributes_hash[att_name.intern]) %></td>
+			<% end %>
+		</tr>
 		<% end %>
 	</tbody>
-
-
 </table>
+<%= form_tag({controller: :attribute, action: :list}, method: "get") do %>
+<%= label_tag(:max_number_of_items, "Max number of item:") %>
+<%= text_field_tag(:max_number_of_items) %>
+<%= text_field_tag :next_page_token, @next_page_token %>
+<%= submit_tag("Submit") %>
+<% end %>
+<% else %>
+No Item
+	
+<% end -%> <!--  end of @list_items.items.size != 0-->
 
 <script type="text/javascript">	
 
