@@ -1,0 +1,31 @@
+<div>
+	<div id="items_grid_item" >
+		<% if @domain %>
+		<table width='50%'>
+			<thead>
+				<tr>
+					<th>Item Count</th>
+					<th>Size of all item name</th>
+					<th>Number of attribute names</th>
+					<th>Size of all unique attribute names</th>
+					<th>Number of all attribute name/value pairs</th>
+					<th>The total size of all attribute values in the domain, in bytes.
+</th>
+					<th>The data and time when metadata was calculated, in Epoch (UNIX) seconds.</th>
+				</tr>
+			</thead>
+			<tbody >
+				<tr>
+					<td><%= @domain.item_count %></td>
+					<td><%= @domain.item_names_size_bytes %></td>
+					<td><%= @domain.attribute_name_count %></td>
+					<td><%= @domain.attribute_names_size_bytes %></td>
+					<td><%= @domain.attribute_value_count %></td>
+					<td><%= @domain.attribute_values_size_bytes %></td>
+					<td><%= @domain.timestamp %></td>
+				</tr>
+			</tbody>
+		</table>
+		<% end %>
+	</div>
+</div>

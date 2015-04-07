@@ -22,6 +22,9 @@ Rails.application.routes.draw do
   get 'domain/add'
   post 'domain/add'
 
+  get 'domain/create'
+  post 'domain/create'
+
   get 'domain/delete'
   post 'domain/delete'
 
@@ -42,6 +45,8 @@ Rails.application.routes.draw do
 
   get 'attribute/test_hash'
 
+  get 'domain/metadata_ajax'
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -57,9 +62,11 @@ Rails.application.routes.draw do
   get 'attribute/put/:domain_name', to: 'attribute#put'
   get 'attribute/get/:domain_name', to: 'attribute#get'
 
+
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
+  get "/fetch_domain_meta" => 'domain#domain_meta_ajax', as: 'fetch_meta'
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 

@@ -1,0 +1,5 @@
+<%= form_tag({controller: :domain, action: :create}, method: "post", remote: "true", id: "domain_add_form") do %>
+  <%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name) %>
+  <%= submit_tag("Submit") %>
+<% end %>

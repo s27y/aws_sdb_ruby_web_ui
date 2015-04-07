@@ -25,6 +25,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # for aws sdk
  gem 'aws-sdk', '~> 2'
 
+ gem 'responders'
+
 
 # gem 'fog'
 
