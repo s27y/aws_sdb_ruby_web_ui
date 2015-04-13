@@ -1,12 +1,18 @@
 class AttributeController < ApplicationController
+    before_action :check_seesion
+    respond_to :html, :js
 
     def check_seesion
         @aws_key_id = session[:aws_key_id]
         @aws_key = session[:aws_key]
         if !@aws_key_id 
-            false
+            @session_state = false
         else
-            true
+            @simpledb = Aws::SimpleDB::Client.new(
+                :access_key_id => @aws_key_id,
+                :secret_access_key => @aws_key,
+                :region => 'eu-west-1')
+            @session_state = true
         end
     end
 
@@ -26,7 +32,6 @@ class AttributeController < ApplicationController
             @list_items = list_items(@simpledb, @domain_name, 100, ""," itemName() = '#{@item_name}'")
 
 
-            
             @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
             @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
         end
@@ -69,6 +74,16 @@ class AttributeController < ApplicationController
         render :text => h.to_s
     end
 
+    def put_ajax
+        @domain_name = params[:domain_name]
+        @attr_name = params[:attr_name]
+        @item_name = params[:item_name]
+        @is_replace = params[:is_replace]
+        if !@is_replace || @is_replace.to_s.size<1
+            @@is_replace = false
+        end
+    end
+
     def put
         if !check_seesion
             redirect_to controller: :home, action: :index
@@ -88,36 +103,32 @@ class AttributeController < ApplicationController
 
         if true
 
-        if false
-            redirect_to controller: :home, action: :index
-        else
-            @simpledb = Aws::SimpleDB::Client.new(
-                :access_key_id => @aws_key_id,
-                :secret_access_key => @aws_key,
-                :region => 'eu-west-1')
-        end
+            if false
+                redirect_to controller: :home, action: :index
+            else
+                @simpledb = Aws::SimpleDB::Client.new(
+                    :access_key_id => @aws_key_id,
+                    :secret_access_key => @aws_key,
+                    :region => 'eu-west-1')
+            end
 
-        if request.post?
-            @item = Item.new(@item_name['0'].to_s)
-            @item.add_attributes(@hash)
-            @item.add_attributes({ name: "2nd_name", value: "2nd_value" })
+            if request.post?
+                @item = Item.new(@item_name['0'].to_s)
+                @item.add_attributes(@hash)
 
 
-            @ha = {items: [
+                @ha = {items: [
                     {
                         name: @item.item_name,
                         attributes: @item.attributes_array,
-                    },
+                        },
                         ]}
 
-            #render :text => @ha
-            #render :text => @item.to_s
-            #@result = get_attributes(@simpledb, @domain_name, @item.item_name).attributes[1][:value]
-            render :text => put_attributes(@simpledb,@domain_name,@item)
-        end
+                        put_attributes(@simpledb,@domain_name,@item)
+                    end
 
-        end
-
+                end
+                redirect_to action: :list, domain_name: @domain_name
     end #END put
 
     def put_attributes(sdb,domain_name,item_obj)
@@ -125,7 +136,7 @@ class AttributeController < ApplicationController
             @resp = sdb.batch_put_attributes(
                 domain_name: domain_name,
                 items: [
-                        {
+                    {
                         name: item_obj.item_name,
                         attributes: item_obj.attributes_array,
                         },
@@ -137,17 +148,140 @@ class AttributeController < ApplicationController
 
     end
 
+    def delete_modal
+        @domain_name = params[:domain_name]
+        @item_name = params[:item_name]
+        @attr_name = params[:attr_name]
+        @attr_value = params[:attr_value]
 
-def delete
-end
+        @attr_array = @attr_value.split(" ")
 
-def select
-    @domain_name = params[:domain_name]
-    render :text => @domain_name
-end
+
+    end
+
+
+    def delete
+        if !check_seesion
+            redirect_to controller: :home, action: :index
+        end
+
+        @domain_name = params[:domain_name]
+        @item_name = params[:item_name]
+        @attr_name = params[:attr_name]
+        @attr_value = params[:attr_value]
+        @attr_value_delete = params[:attr_value_delete]
+        @attr_array_temp = @attr_value.split(" ")
+        @attr_array = Array.new
+
+        if @attr_value_delete && @attr_value_delete.size>0 
+
+
+
+        @attr_value_delete.each do |k,v|
+            @attr_array.push(@attr_array_temp[k.to_i])
+        end
+
+        
+        @item = Hash.new
+        @item[:name] = @item_name
+        @item[:attributes] = Array.new
+        @attr_array.each do |ele|
+            @attribute = Hash.new
+            @attribute[:name] = @attr_name
+            @attribute[:value] = ele
+            @item[:attributes].push(@attribute)
+        end
+
+
+        if request.post?
+            delete_attribute(@domain_name,[@item])
+        end
+        end
+        redirect_to action: :list
+        
+    end
+
+    def delete_attribute(domain_name,items)
+        @resp = @simpledb.batch_delete_attributes(
+  # required
+  domain_name: domain_name,
+  # required
+  items: [items[0]],
+  )
+    end
+
+    def select
+
+        if !check_seesion
+            redirect_to controller: :home, action: :index
+        end
+
+        @select = params[:select]
+        @from = params[:from]
+        @where = params[:where]
+        @order_by = params[:order_by]
+        @sort_instructions = params[:sort_instructions]
+        @limit = params[:limit]
+        @@next_page_token = params[:@next_page_token]
+
+
+        if request.post?
+            if @order_by && @order_by.size>0
+                @order_by_str = 'order by ' + @order_by.to_s
+            end
+
+            if !@select || @select.size <1
+                @select = "*"
+            end
+
+            if @where && @where.size >0
+                @where_str = 'where ' + @where.to_s
+            end
+
+            if !@limit || @limit.size<1
+                @limit = "100"
+            end
+
+            if !@next_page_token
+                @next_page_token = ""
+            end
+
+
+            @list_items = select_items(@select, @from, @where_str, 
+                                    @order_by_str, @sort_instructions, @limit, @next_page_token)
+            @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
+            @next_page_token = @list_items.next_token
+
+            @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
+            @select_query = "select #{@select} from #{@from} #{@where_str} #{@order_by} #{@sort_instructions} limit #{@limit}"
+
+            @domain_name = @from
+
+        end
+
+
+    end
+
+
+    def select_items(select, domain_name,  where, order_by, sort_instructions, limit, next_page_token = '')
+        begin
+            @resp = @simpledb.select(
+                select_expression: "select #{select} from #{domain_name} #{where} #{order_by} #{sort_instructions} limit #{limit}",
+                next_token: next_page_token,
+                consistent_read: true,)
+            #TODO need catch exception here
+        end
+        #select * from mydomain where attr1 = 'He said, "That''s the ticket!"'  select * from mydomain where attr1 = "He said, ""That's the ticket!"""
+
+        @resp
+    end
+
+
+
+
 
     def list
-    if !params[:max_number_of_row]
+        if !params[:max_number_of_row]
             @max_number_of_row = 100
         else
             @max_number_of_row = params[:max_number_of_row]
@@ -172,10 +306,6 @@ end
         if !check_seesion
             redirect_to controller: :home, action: :index
         else
-            @simpledb = Aws::SimpleDB::Client.new(
-                :access_key_id => @aws_key_id,
-                :secret_access_key => @aws_key,
-                :region => 'eu-west-1')
             @list_items = list_items(@simpledb, @domain_name, @max_number_of_items, @next_page_token)
 
         #make sure there is items in the domain
@@ -187,13 +317,13 @@ end
 
         @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
 
-        end
     end
+end
 
-    def format_request_to_obj(all_attr_names, items)
-        @item_obj_array = Array.new
-        items.each do |item|
-            @item = NewItem.new(item.name)
+def format_request_to_obj(all_attr_names, items)
+    @item_obj_array = Array.new
+    items.each do |item|
+        @item = NewItem.new(item.name)
 
             #add all possible attributes name to the new created item
             all_attr_names.each do |name|
@@ -228,7 +358,7 @@ end
 
         begin
             if where_statement
-            @resp = sdb.select(
+                @resp = sdb.select(
                     select_expression: "select * from #{domain_name} where #{where_statement} limit #{max_number_of_items}",
                     next_token: next_page_token,
                     consistent_read: true,)
@@ -239,11 +369,14 @@ end
                     consistent_read: true,)
             end
                 #TODO need catch exception here
-        end
+            end
         #select * from mydomain where attr1 = 'He said, "That''s the ticket!"'  select * from mydomain where attr1 = "He said, ""That's the ticket!"""
 
         @resp
     end
+
+
+
 
 
 end

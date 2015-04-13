@@ -1,0 +1,45 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+        <%= form_tag({controller: :attribute, action: :delete}, method: "post") do %>
+        <%= hidden_field_tag(:domain_name, @domain_name) %>
+        <%= hidden_field_tag(:item_name, @item_name) %>
+        <%= hidden_field_tag(:attr_name, @attr_name) %>
+        <%= hidden_field_tag(:attr_value, @attr_value) %>
+         
+
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Delete</h4>
+        </div>
+        <div class="modal-body">
+            <p>Domain: <%= @domain_name = params[:domain_name].to_s %></p>
+            <p>Item: <%= @item_name = params[:item_name].to_s %></p>
+            <p>Attribute Name: <%= @attr_name = params[:attr_name].to_s %></p>
+            <p>Attribute Value:</p>
+            <% @attr_array.each_with_index do |att,index| %>
+            <%= check_box_tag("attr_value_delete[#{index}]") %>
+            <%= label_tag(att) %>
+            <% end %>
+        
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        <% end %>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript"> 
+$( document ).ready(function() {
+
+    $('.modal').modal('show');
+
+});
+
+</script>

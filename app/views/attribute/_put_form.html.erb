@@ -1,0 +1,24 @@
+<%= form_tag({controller: :attribute, action: :put}, {id: "add_item_form", method: "post"}) do %>
+
+	<%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name, @domain_name) %>
+  <br />
+--------------
+<br />
+  <div id="item_1" >
+  <%= label_tag("item_name[0]", "Item name:") %>
+  <input type="textbox" name="item_name[0]" value="default_item_name" >
+  <br />
+  <%= label_tag("attributes[0][name]", "Attribute name:") %>
+  <input type="textbox" name="attributes[0][name]" value="default_attr_name" >
+  <br />
+  <%= label_tag("attributes[0][value]", "Attribute value:") %>
+  <input type="textbox" name="attributes[0][value]" value="default_attr_value" >
+  <br />
+  <%= label_tag("attributes[0][replace]", "Replace:") %>
+  <%= check_box_tag 'attributes[0][replace]', 'true', true %>
+</div>
+
+<br />
+	<%= submit_tag("Submit") %>
+<% end %>

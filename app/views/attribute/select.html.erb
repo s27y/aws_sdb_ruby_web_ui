@@ -1,2 +1,35 @@
 <h1>Attribute#select</h1>
 <p>Find me in app/views/attribute/select.html.erb</p>
+
+
+
+<%= form_tag({controller: :attribute, action: :select}, method: "post", id: "domain_add_form") do %>
+  <%= label_tag(:select, "select") %>
+  <%= text_field_tag(:select) %>
+  <%= label_tag(:from, "from") %>
+  <%= text_field_tag(:from) %>
+  <%= label_tag(:where, "where") %>
+  <%= text_field_tag(:where) %>
+  <%= label_tag(:order_by, "order_by") %>
+  <%= text_field_tag(:order_by) %>
+  <%= label_tag(:sort_instructions, "sort_instructions") %>
+  <%= select_tag :sort_instructions, "<option>asc</option><option>deasc</option>".html_safe %>
+  <%= text_field_tag(:sort_instructions) %>
+  <%= label_tag(:limit, "limit") %>
+  <%= text_field_tag(:limit) %>
+  <%= submit_tag("Submit") %>
+<% end %>
+
+<%=h render "list_attribute_table" %>
+
+
+    <div id="modal_div"></div>
+    
+<script type="text/javascript"> 
+  $( document ).ready(function() {
+
+
+});
+
+
+</script>

@@ -1,0 +1,49 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+        <%= form_tag({controller: :attribute, action: :put}, method: "post",id: "add_item_form") do %>
+         
+
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">New Item</h4>
+        </div>
+        <div class="modal-body">
+
+  <%= hidden_field_tag(:domain_name, @domain_name) %>
+  <div id="item_1" >
+  <%= label_tag("item_name[0]", "Item name:") %>
+  <input type="textbox" name="item_name[0]" value="<%= @item_name %>" >
+  <br />
+  <%= label_tag("attributes[0][name]", "Attribute name:") %>
+  <input type="textbox" name="attributes[0][name]" value="<%= @attr_name %>" >
+  <br />
+  <%= label_tag("attributes[0][value]", "Attribute value:") %>
+  <input type="textbox" name="attributes[0][value]" value="<%= @attr_value %>" >
+  <br />
+  <%= label_tag("attributes[0][replace]", "Replace:") %>
+  <%= check_box_tag 'attributes[0][replace]', 'true', @is_replace %>
+</div>
+
+        
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        <% end %>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript"> 
+$( document ).ready(function() {
+
+    $('.modal').modal('show');
+
+});
+
+</script>

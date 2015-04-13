@@ -1,31 +1,62 @@
-<div>
-	<div id="items_grid_item" >
-		<% if @domain %>
-		<table width='50%'>
-			<thead>
-				<tr>
-					<th>Item Count</th>
-					<th>Size of all item name</th>
-					<th>Number of attribute names</th>
-					<th>Size of all unique attribute names</th>
-					<th>Number of all attribute name/value pairs</th>
-					<th>The total size of all attribute values in the domain, in bytes.
-</th>
-					<th>The data and time when metadata was calculated, in Epoch (UNIX) seconds.</th>
-				</tr>
-			</thead>
-			<tbody >
-				<tr>
-					<td><%= @domain.item_count %></td>
-					<td><%= @domain.item_names_size_bytes %></td>
-					<td><%= @domain.attribute_name_count %></td>
-					<td><%= @domain.attribute_names_size_bytes %></td>
-					<td><%= @domain.attribute_value_count %></td>
-					<td><%= @domain.attribute_values_size_bytes %></td>
-					<td><%= @domain.timestamp %></td>
-				</tr>
-			</tbody>
-		</table>
-		<% end %>
-	</div>
-</div>
+<div class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Domain Metadata</h4>
+			</div>
+			<div class="modal-body">
+
+				<% if @domain %>
+				<div class="list-group">
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Item Count</b>
+						<p class="list-group-item-text"><%= @domain.item_count %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Size of all item name</b>
+						<p class="list-group-item-text"><%= @domain.item_names_size_bytes %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Number of attribute names</b>
+						<p class="list-group-item-text"><%= @domain.attribute_name_count %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Size of all unique attribute names</b>
+						<p class="list-group-item-text"><%= @domain.attribute_names_size_bytes %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Number of all attribute name/value pairs</b>
+						<p class="list-group-item-text"><%= @domain.attribute_value_count %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Size of all attribute in bytes.</b>
+						<p class="list-group-item-text"><%= @domain.attribute_values_size_bytes %></p>
+					</a>
+					<a href="#" class="list-group-item">
+						<b class="list-group-item-heading">Date and time in Epoch (UNIX) seconds</b>
+						<p class="list-group-item-text"><%= @domain.timestamp %></p>
+					</a>
+
+				</div>
+
+				<% end %>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript"> 
+$( document ).ready(function() {
+
+	$('.modal').modal('show');
+
+});
+
+</script>
+

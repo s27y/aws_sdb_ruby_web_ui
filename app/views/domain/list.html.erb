@@ -1,47 +1,49 @@
 <h1>Domain#list</h1>
 <p>Find me in app/views/domain/list.html.erb</p>
 
+<div class="alert" role="alert"></div>
+
 <%= form_tag({controller: :domain, action: :list}, method: :post) do %>
 <%= label_tag(:max_number_of_domains, "Max Number Of Domain:") %>
 <%= number_field_tag(:max_number_of_domains, @max_number_of_domains, in: 1...11) %>
 <%= submit_tag("Show Domain") %>
 <% end %>
 
-  <%=h link_to "Add Domain", {:controller=>:domain, :action=> :add},  id: "add_domain_link" ,:remote => true %>
+<%=h link_to "Add Domain", {:controller=>:domain, :action=> :add},  id: "add_domain_link" ,:remote => true %>
+
+<div class="row">
+	<div>
+
+		<table class="table table-striped ">
+			<tr>
+				<th>Domain</th>
+				<th>list item</th>
+			</tr>
+			<% if @domains.next_token %>
+			<%= @domains_next_page %>
+			<%= form_tag({controller: "domain", action: "list"}, method: "post") do %>
+			<%= hidden_field_tag(:next_page_token,  @domains.next_token) %>
+			<%= hidden_field_tag(:max_number_of_domains,  @max_number_of_domains) %>
+			<%= submit_tag("next") %>
+			<% end %>
+			<% end %>
+
+			<%  @domains.domain_names.each do |name| %>
+			<tr class="<%= name %>" ><td><%=name %>  
+			</td>
+			<td>
+				<%=h link_to "Metadata", {:controller=>:domain, :action=> :metadata_ajax, :domain_name => name}, :remote => true %>
+				<br />
+				<%=h link_to "Show Items", :controller=>:attribute, :action=> :list, :domain_name => name  %>
+				<br />
+				<%=h link_to "Delete", {:controller=>:domain, :action=> :delete, :domain_name => name}, method: :post, :remote => true,data: { confirm: "Are you sure?" } %>
 
 
-<table class="table table-striped">
- <tr>
-  <th>Domain</th>
-  <th>meta</th>
-  <th>list item</th>
- </tr>
- <% if @domains.next_token %>
- <%= @domains_next_page %>
- <%= form_tag({controller: "domain", action: "list"}, method: "post") do %>
- <%= hidden_field_tag(:next_page_token,  @domains.next_token) %>
- <%= hidden_field_tag(:max_number_of_domains,  @max_number_of_domains) %>
- <%= submit_tag("next") %>
- <% end %>
- <% end %>
 
- <%  @domains.domain_names.each do |name| %>
- <tr><td><%=name %>  
- </td>
- <td>
-  <%=h link_to "Metadata", :controller=>:domain, :action=> :metadata_ajax, :domain_name => name, :remote => true %>
-</td>
-<td>
-  <%=h link_to "Show Items", :controller=>:attribute, :action=> :list, :domain_name => name  %>
-  <%=h link_to "Delete Domain", {:controller=>:domain, :action=> :delete, :domain_name => name}, method: :post, :remote => true,data: { confirm: "Are you sure?" } %>
-
-
-
-</td>
-</tr>
-<% end %>
-</table> 
-
-<div id="items_grid" >
-  
+			</td>
+		</tr>
+		<% end %>
+	</table> 
 </div>
+</div>
+<div id="modal_div"></div>

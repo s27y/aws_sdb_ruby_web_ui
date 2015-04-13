@@ -5,9 +5,15 @@ Rails.application.routes.draw do
   get 'attribute/put'
   post 'attribute/put'
 
+  post 'attribute/put_ajax'
+
   get 'attribute/delete'
+  post 'attribute/delete'
+
+  post 'attribute/delete_modal'
 
   get 'attribute/select'
+  post 'attribute/select'
 
   get 'attribute/list'
 

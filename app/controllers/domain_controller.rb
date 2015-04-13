@@ -21,39 +21,35 @@ class DomainController < ApplicationController
     def add
         if !@session_state
             redirect_to controller: :home, action: :index
-
             end
         end
 
-        def create
-            begin
-                @domain_name = params[:domain_name]
-                @resp = @simpledb.create_domain(domain_name: @domain_name)
+    def create
+        begin
+            @domain_name = params[:domain_name]
+            @resp = @simpledb.create_domain(domain_name: @domain_name)
+            respond_to do |format|
+                format.html {redirect_to action: :list}
+                format.js
+                
+            end
+        end
+    end
 
+    def delete
+        if !@session_state
+            redirect_to controller: :home, action: :index
+        else            
+            if request.post?
+                @domain_name = params[:domain_name]
+                delete_domain(@simpledb,@domain_name)
                 respond_to do |format|
                     format.html {redirect_to action: :list}
                     format.js
                 end
-            end
+            end 
         end
-
-
-        def delete
-            if !@session_state
-                redirect_to controller: :home, action: :index
-            else            
-                if request.post?
-                    @domain_name = params[:domain_name]
-                    delete_domain(@simpledb,@domain_name)
-
-                    respond_to do |format|
-                        format.html {redirect_to action: :list}
-                        format.js
-                    end
-
-                end 
-            end
-        end
+    end
 
         def delete_domain(sdb,domain_name)
             begin

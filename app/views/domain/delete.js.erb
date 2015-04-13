@@ -1,0 +1,5 @@
+$('.alert').text('<%=j @domain_name %> is deleted');
+$('.alert').addClass('alert-success');
+
+$('.<%= @domain_name %>').remove();
+$('.domain-meta-list').remove();

@@ -15,6 +15,10 @@ class NewItem
     @attributes_hash[att_name.intern].to_s
     end
 
+    def obj_to_aws_format
+
+    end
+
   	def to_s
   		result = String.new
   		result << "Name: " <<@item_name <<"\n."

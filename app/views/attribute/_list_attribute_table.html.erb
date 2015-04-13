@@ -1,0 +1,49 @@
+<% if @list_items && @list_items.items.size != 0 %>
+
+<h1><%= @domain_name %> </h1>
+<%=h link_to "New Item", {:controller=>:attribute, :action=> :put_ajax, :domain_name =>@domain_name },  method: :post, id: "add_item_link" ,:remote => true %>
+
+<table border="1" class="table table-striped" >
+	<thead>
+		<tr>
+			<th>Item Name</th>
+			<% @all_attributes_names.each do |att_name| %>
+			<th><%= att_name %></th>
+			<% end -%>
+		</tr>
+	</thead>
+	<tbody>
+		<% @item_obj_array.each do |item_obj| %>
+		<tr>
+			<td><%= item_obj.item_name %> </td>
+			<% @all_attributes_names.each do |att_name| %>
+			
+
+			<td class="attribute" >
+				<% if item_obj.attributes_hash[att_name.intern] != nil &&
+					item_obj.attributes_hash[att_name.intern].size>0 %>
+					<%=h link_to "Delete", {:controller=>:attribute, :action=> :delete_modal, 
+						:domain_name => @domain_name,:item_name => item_obj.item_name,
+						:attr_name=> att_name, :attr_value=> item_obj.attributes_hash[att_name.intern]},
+						method: :post, remote: true %>
+				<% end %>
+				<%=h link_to "Add", {:controller=>:attribute, :action=> :put_ajax, :domain_name => @domain_name,:item_name => item_obj.item_name,
+						:attr_name=> att_name },  method: :post, id: "add_item_link" ,:remote => true %>
+
+						<%= simple_format (h item_obj.attributes_hash[att_name.intern]) %>
+					</td>
+					<% end %>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
+		<%= form_tag({controller: :attribute, action: :list}, method: "get") do %>
+		<%= label_tag(:max_number_of_items, "Max number of item:") %>
+		<%= text_field_tag(:max_number_of_items) %>
+		<%= text_field_tag :next_page_token, @next_page_token %>
+		<%= submit_tag("Submit") %>
+		<% end %>
+		<% else %>
+		No Item
+
+<% end -%> <!--  end of @list_items.items.size != 0-->

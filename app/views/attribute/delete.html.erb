@@ -1,2 +1,18 @@
 <h1>Attribute#delete</h1>
 <p>Find me in app/views/attribute/delete.html.erb</p>
+
+<%= form_tag({controller: :attribute, action: :delete}, method: "post") do %>
+  <%= label_tag(:domain_name, "Domain Name:") %>
+  <%= text_field_tag(:domain_name, "glacier") %>
+
+  <%= label_tag(:item_name, "Item Name:") %>
+  <%= text_field_tag(:item_name) %>
+
+  <%= label_tag(:attr_name, "Attribute Name:") %>
+  <%= text_field_tag(:attr_name) %>
+  
+  <%= label_tag(:attr_value, "Attribute Value:") %>
+  <%= text_field_tag(:attr_value) %>
+
+  <%= submit_tag("Submit") %>
+<% end %>

@@ -5,19 +5,18 @@ Welcome to Yang's Simple DB Web App
 
 
 <% flash.each do |name, msg| -%>
-      <%= content_tag :div, msg, class: name %>
-    <% end -%>
+	<%= content_tag :div, msg, class: name %>
+<% end -%>
 
 <%= form_tag({controller: "credential", action: "add"}, method: "post") do %>
-  <%= label_tag(:aws_key_id, "AWSAccessKeyId:") %>
-  <%= text_field_tag(:aws_key_id,  "AKIAI5ZU5RPLSMHROXNQ") %>
-  <%= label_tag(:aws_key, "AWSSecretKey:") %>
-  <%= text_field_tag(:aws_key,  "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") %>
-  
-  <%= submit_tag("Add AWS Credential") %>
+<%= label_tag(:aws_key_id, "AWSAccessKeyId:") %>
+<%= text_field_tag(:aws_key_id,  "AKIAI5ZU5RPLSMHROXNQ") %>
+<%= label_tag(:aws_key, "AWSSecretKey:") %>
+<%= text_field_tag(:aws_key,  "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") %>
+
+<%= submit_tag("Add AWS Credential") %>
 <% end %>
 
 <%= link_to "remove credential", controller: :credential, action: :remove %>
-<%= link_to "list domain", controller: :domain, action: :list %>
-<%= link_to "add domain", controller: :domain, action: :add %>
-<%= link_to "delete domain", controller: :domain, action: :delete %>
+<%= link_to "domain", controller: :domain, action: :list %>
+
