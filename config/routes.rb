@@ -15,7 +15,10 @@ Rails.application.routes.draw do
   get 'attribute/select'
   post 'attribute/select'
 
+  post 'attribute/select_ajax'
+
   get 'attribute/list'
+  post 'attribute/list'
 
   get 'get/put'
 

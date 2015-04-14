@@ -1,9 +1,9 @@
-<% if @list_items && @list_items.items.size != 0 %>
-
 <h1><%= @domain_name %> </h1>
 <%=h link_to "New Item", {:controller=>:attribute, :action=> :put_ajax, :domain_name =>@domain_name },  method: :post, id: "add_item_link" ,:remote => true %>
+<%=h link_to "New Query", {:controller=>:attribute, :action=> :select_ajax, :domain_name =>@domain_name },  method: :post, id: "select_query_link" ,:remote => true %>
+<% if @list_items && @list_items.items.size != 0 %>
 
-<table border="1" class="table table-striped" >
+<table  class="table table-striped" >
 	<thead>
 		<tr>
 			<th>Item Name</th>
@@ -38,12 +38,18 @@
 			</tbody>
 		</table>
 		<%= form_tag({controller: :attribute, action: :list}, method: "get") do %>
+		<%= hidden_field_tag(:domain_name,  @domain_name) %>
 		<%= label_tag(:max_number_of_items, "Max number of item:") %>
-		<%= text_field_tag(:max_number_of_items) %>
+		<%= text_field_tag(:max_number_of_items, @max_number_of_items) %>
 		<%= text_field_tag :next_page_token, @next_page_token %>
+		<% if @next_page_token %>
+		<%= submit_tag("Next Page") %>
+		<% else %>
 		<%= submit_tag("Submit") %>
 		<% end %>
+		
+		<% end %>
 		<% else %>
-		No Item
+		<p>No Item </p>
 
 <% end -%> <!--  end of @list_items.items.size != 0-->

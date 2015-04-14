@@ -1,7 +1,15 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
-Welcome to Yang's Simple DB Web App
-<%= @key_pair_message %>
+<div class="jumbotron">
+        <h1>Welcome <small>Yang's SimpleDB Web App</small></h1>
+        <p>This is a project for UCD COMP41110 Cloud Computing. The project uses Ruby on Rails framework and AWS SimpleDB API. The UI is done with Bootstrap</p>
+        <p>Why not check out the source code from my github page <a href="https://github.com/s27y">s27y</a></p>
+      </div>
+
+<ol class="breadcrumb">
+  <li class="active"><%= link_to "Home", controller: :home, action: :index %></li>
+</ol>
+
+
+
 
 
 <% flash.each do |name, msg| -%>
@@ -16,7 +24,4 @@ Welcome to Yang's Simple DB Web App
 
 <%= submit_tag("Add AWS Credential") %>
 <% end %>
-
-<%= link_to "remove credential", controller: :credential, action: :remove %>
-<%= link_to "domain", controller: :domain, action: :list %>
 

@@ -3,7 +3,7 @@
 
 
 
-<%= form_tag({controller: :attribute, action: :select}, method: "post", id: "domain_add_form") do %>
+<%= form_tag({controller: :attribute, action: :select}, method: "post", id: "select_query_form") do %>
   <%= label_tag(:select, "select") %>
   <%= text_field_tag(:select) %>
   <%= label_tag(:from, "from") %>
@@ -14,9 +14,9 @@
   <%= text_field_tag(:order_by) %>
   <%= label_tag(:sort_instructions, "sort_instructions") %>
   <%= select_tag :sort_instructions, "<option>asc</option><option>deasc</option>".html_safe %>
-  <%= text_field_tag(:sort_instructions) %>
   <%= label_tag(:limit, "limit") %>
   <%= text_field_tag(:limit) %>
+  <%= hidden_field_tag(:next_page_token, @next_page_token) %>
   <%= submit_tag("Submit") %>
 <% end %>
 

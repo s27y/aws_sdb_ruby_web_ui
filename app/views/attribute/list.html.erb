@@ -1,5 +1,7 @@
-<h1>Attribute#list</h1>
-<p>Find me in app/views/attribute/list.html.erb</p>
+<ol class="breadcrumb">
+  <li><%= link_to "Home", controller: :home, action: :index %></li>
+  <li class="active"><%= link_to "Attribute of #{@domain_name}", {controller: :attribute, action: :list, domain_name: @domain_name} %></li>
+</ol>
 
 
 

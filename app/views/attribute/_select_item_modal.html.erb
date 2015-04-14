@@ -1,0 +1,55 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Delete</h4>
+        </div>
+        <div class="modal-body">
+            <%= form_tag({controller: :attribute, action: :list}, method: "post", id: "select_query_form") do %>
+            <div class="form-group">
+              <%= label_tag(:select, "select") %>
+              <%= text_field_tag(:select,"*") %>
+          </div>
+          <div class="form-group">
+              <%= label_tag(:domain_name, "from") %>
+              <%= text_field_tag(:domain_name,@domain_name) %>
+          </div>
+          <div class="form-group">
+              <%= label_tag(:where, "where") %>
+              <%= text_field_tag(:where) %>
+          </div>
+          <div class="form-group">
+              <%= label_tag(:order_by, "order_by") %>
+              <%= text_field_tag(:order_by) %>
+          </div>
+          <div class="form-group">
+              <%= label_tag(:sort_instructions, "sort_instructions") %>
+              <%= select_tag :sort_instructions, "<option>ASC</option><option>DESC</option>".html_safe %>
+          </div>
+          <div class="form-group">
+              <%= label_tag(:max_number_of_items, "limit") %>
+              <%= text_field_tag(:max_number_of_items) %>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <% end %>
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript"> 
+$( document ).ready(function() {
+
+    $('.modal').modal('show');
+
+});
+
+</script>

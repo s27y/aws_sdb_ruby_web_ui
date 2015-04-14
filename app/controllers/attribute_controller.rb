@@ -7,6 +7,7 @@ class AttributeController < ApplicationController
         @aws_key = session[:aws_key]
         if !@aws_key_id 
             @session_state = false
+            flash[:warning] = "Sorry! Please enter your AWS credential."
         else
             @simpledb = Aws::SimpleDB::Client.new(
                 :access_key_id => @aws_key_id,
@@ -53,25 +54,12 @@ class AttributeController < ApplicationController
         
     end
 
-
     def att_hash_to_aws_att_hash(hash)
         array = Array.new
         hash = {"name_1" => 'name_value', "Isidora" => 35, "some" => 65}
         hash.each { |name, value| array.push(Hash[name: name, value: value])}
 
         array
-    end
-
-    def test_hash
-        h = Array.new
-
-        attribute1= {name: "name1", value: "value1", replace: true}
-        attribute2= {name: "name2", value: "value2", replace: true}
-        attribute3= {name: "name3", value: "value3", replace: true}
-        h.push(attribute1)
-        h.push(attribute2)
-        h.push(attribute3)
-        render :text => h.to_s
     end
 
     def put_ajax
@@ -144,8 +132,6 @@ class AttributeController < ApplicationController
         rescue Aws::SimpleDB::Errors::NoSuchDomain => e
             return "error"
         end
-        
-
     end
 
     def delete_modal
@@ -181,7 +167,7 @@ class AttributeController < ApplicationController
             @attr_array.push(@attr_array_temp[k.to_i])
         end
 
-        
+
         @item = Hash.new
         @item[:name] = @item_name
         @item[:attributes] = Array.new
@@ -197,7 +183,7 @@ class AttributeController < ApplicationController
             delete_attribute(@domain_name,[@item])
         end
         end
-        redirect_to action: :list
+        redirect_to action: :list, domain_name: @domain_name
         
     end
 
@@ -210,43 +196,57 @@ class AttributeController < ApplicationController
   )
     end
 
-    def select
+ def select
 
         if !check_seesion
             redirect_to controller: :home, action: :index
         end
 
-        @select = params[:select]
-        @from = params[:from]
+        
         @where = params[:where]
         @order_by = params[:order_by]
         @sort_instructions = params[:sort_instructions]
         @limit = params[:limit]
-        @@next_page_token = params[:@next_page_token]
+        
 
 
         if request.post?
-            if @order_by && @order_by.size>0
-                @order_by_str = 'order by ' + @order_by.to_s
-            end
-
-            if !@select || @select.size <1
+            if params[:select].empty?
                 @select = "*"
+            else
+                @select = params[:select]
             end
 
-            if @where && @where.size >0
-                @where_str = 'where ' + @where.to_s
+            if params[:from].empty?
+                flash[:warning] = "Sorry! Please enter a domain name."
+                redirect_to controller: :attribute, action: :select
+                return
+            else
+                @from = params[:from]
             end
 
-            if !@limit || @limit.size<1
+            if !params[:order_by].empty?
+                @order_by_str = 'order by ' + params[:order_by].to_s
+            else
+                @order_by_str = ""
+                @sort_instructions = " "
+            end
+
+            if !params[:where].empty?
+                @where_str = 'where ' + params[:where].to_s
+            end
+
+            if params[:limit].empty?
                 @limit = "100"
             end
 
-            if !@next_page_token
+            if params[:next_page_token] && params[:next_page_token].empty?
                 @next_page_token = ""
+            else
+                @next_page_token = params[:next_page_token]
             end
 
-
+            @select_query = "select #{@select} from #{@from} #{@where_str} #{@order_by} #{@sort_instructions} limit #{@limit}"
             @list_items = select_items(@select, @from, @where_str, 
                                     @order_by_str, @sort_instructions, @limit, @next_page_token)
             @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
@@ -256,6 +256,7 @@ class AttributeController < ApplicationController
             @select_query = "select #{@select} from #{@from} #{@where_str} #{@order_by} #{@sort_instructions} limit #{@limit}"
 
             @domain_name = @from
+           
 
         end
 
@@ -263,7 +264,7 @@ class AttributeController < ApplicationController
     end
 
 
-    def select_items(select, domain_name,  where, order_by, sort_instructions, limit, next_page_token = '')
+    def select_items(select, domain_name, where, order_by, sort_instructions, limit, next_page_token = '')
         begin
             @resp = @simpledb.select(
                 select_expression: "select #{select} from #{domain_name} #{where} #{order_by} #{sort_instructions} limit #{limit}",
@@ -276,49 +277,83 @@ class AttributeController < ApplicationController
         @resp
     end
 
-
-
-
+    def select_ajax
+        @domain_name = params[:domain_name]
+    end
 
     def list
-        if !params[:max_number_of_row]
-            @max_number_of_row = 100
+        if params[:domain_name]
+            if !params[:domain_name].empty?
+                @domain_name = params[:domain_name]
+            end
         else
-            @max_number_of_row = params[:max_number_of_row]
+            flash[:warning] = "Sorry! Please enter a domain name."
+            redirect_to controller: :domain, action: :list
+            return 
         end
+
+        @select = "*"
+        if params[:select]
+            if !params[:select].empty?
+                @select = params[:select]
+            end
+        end
+
+        if params[:where]
+            if !params[:where].empty?
+                @where_str = 'where ' + params[:where].to_s
+            end
+        else
+            @where_str = ""
+        end
+
+        @order_by_str= ""
+        @sort_instructions = ""
+        if params[:order_by]
+            if !params[:order_by].empty?
+                @order_by_str = 'order by ' + params[:order_by].to_s
+                @sort_instructions = params[:sort_instructions]
+            end
+        end
+        
 
         @next_page_token = params[:next_page_token]
         if !@next_page_token
             @next_page_token = ""
         end
 
-        @domain_name = params[:domain_name] 
-
         @max_number_of_items = params[:max_number_of_items]
         if !@max_number_of_items ||@max_number_of_items == ""
             @max_number_of_items = 100
         end
 
-        if !@domain_name ||@domain_name.size<1
-            @domain_name = "glacier"
+        if params[:domain_name]
+            if !params[:domain_name].empty?
+                @domain_name = params[:domain_name]
+            end
+        else
+            flash[:warning] = "Sorry! Please enter a domain name."
+            redirect_to controller: :attribute, action: :list
+            return 
         end
 
         if !check_seesion
             redirect_to controller: :home, action: :index
         else
-            @list_items = list_items(@simpledb, @domain_name, @max_number_of_items, @next_page_token)
+            @list_items =select_items(@select, @domain_name,  @where_str, @order_by_str, @sort_instructions, @max_number_of_items, @next_page_token)
 
-        #make sure there is items in the domain
-        if @list_items.items.size == 0
-            return
+            #make sure there is items in the domain
+            if @list_items.items.size == 0
+                flash[:info] ="No item in the domain."
+                return
+            end
+            @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
+            @next_page_token = @list_items.next_token
+
+            @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
+
         end
-        @all_attributes_names = get_uniq_attribute_names_from_items(@list_items)
-        @next_page_token = @list_items.next_token
-
-        @item_obj_array = format_request_to_obj(@all_attributes_names, @list_items.items)
-
     end
-end
 
 def format_request_to_obj(all_attr_names, items)
     @item_obj_array = Array.new
@@ -338,8 +373,6 @@ def format_request_to_obj(all_attr_names, items)
         end
         return @item_obj_array
     end
-    
-
 
     def get_uniq_attribute_names_from_items(list_items)
         @attr_names= Array.new
@@ -353,30 +386,5 @@ def format_request_to_obj(all_attr_names, items)
         end
         @attr_names
     end
-
-    def list_items(sdb, domain_name, max_number_of_items=100, next_page_token="",where_statement=nil)
-
-        begin
-            if where_statement
-                @resp = sdb.select(
-                    select_expression: "select * from #{domain_name} where #{where_statement} limit #{max_number_of_items}",
-                    next_token: next_page_token,
-                    consistent_read: true,)
-            else
-                @resp = sdb.select(
-                    select_expression: "select * from #{domain_name} limit #{max_number_of_items}",
-                    next_token: next_page_token,
-                    consistent_read: true,)
-            end
-                #TODO need catch exception here
-            end
-        #select * from mydomain where attr1 = 'He said, "That''s the ticket!"'  select * from mydomain where attr1 = "He said, ""That's the ticket!"""
-
-        @resp
-    end
-
-
-
-
 
 end

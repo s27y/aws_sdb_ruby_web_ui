@@ -1,13 +1,22 @@
 class HomeController < ApplicationController
-  def index
 
-    if session[:aws_key_id] && session[:aws_key]
-        flash[:notice] = "Your key pair is valid"
-    else
-      flash[:notice] = "Your key pair is invalid"
-      
-    end
-end 
+
+  def check_seesion()
+        @aws_key_id = session[:aws_key_id]
+        @aws_key = session[:aws_key]
+        if !@aws_key_id 
+            @session_state = false
+        else
+            @simpledb = Aws::SimpleDB::Client.new(
+                :access_key_id => @aws_key_id,
+                :secret_access_key => @aws_key,
+                :region => 'eu-west-1')
+            @session_state = true
+        end
+  end
+
+  def index
+  end 
 
   def bye
   	@aws_key_id = session[:aws_key_id]

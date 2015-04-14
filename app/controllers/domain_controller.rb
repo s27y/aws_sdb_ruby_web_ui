@@ -1,9 +1,10 @@
 class DomainController < ApplicationController
-    before_action :check_seesion,  except: [:index]
+    before_action :check_seesion
     respond_to :html, :js
 
 
     def check_seesion
+        
 
         @aws_key_id = session[:aws_key_id]
         @aws_key = session[:aws_key]
@@ -31,7 +32,6 @@ class DomainController < ApplicationController
             respond_to do |format|
                 format.html {redirect_to action: :list}
                 format.js
-                
             end
         end
     end
