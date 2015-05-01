@@ -45,9 +45,9 @@
 						<ul class="dropdown-menu" role="menu">
 							<%= form_tag({controller: "credential", action: "add"}, method: "post") do %>
 							<li><%= label_tag(:aws_key_id, "AWSAccessKeyId:") %></li>
-							<li><%= text_field_tag(:aws_key_id,  "AKIAI5ZU5RPLSMHROXNQ") %></li>
+							<li><%= text_field_tag(:aws_key_id,  "") %></li>
 							<li><%= label_tag(:aws_key, "AWSSecretKey:") %></li>
-							<li><%= text_field_tag(:aws_key,  "A2LYL7gqQCLCnmNSq/kh8sg274vgVieBNff3NNSJ") %></li>
+							<li><%= text_field_tag(:aws_key,  "") %></li>
 
 							<li><%= submit_tag("Add AWS Credential") %></li>
 							<% end %>
