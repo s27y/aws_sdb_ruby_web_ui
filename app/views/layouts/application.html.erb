@@ -36,14 +36,12 @@
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li ><%= link_to "Domain", controller: :domain, action: :list %></li>
-					<li><a href="#">Link</a></li>
 
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#">Link</a></li>
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Credential <span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<%= form_tag({controller: "credential", action: "add"}, method: "post") do %>
 							<li><%= label_tag(:aws_key_id, "AWSAccessKeyId:") %></li>

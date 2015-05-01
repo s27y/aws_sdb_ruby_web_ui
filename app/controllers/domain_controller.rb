@@ -54,6 +54,7 @@ class DomainController < ApplicationController
         def delete_domain(sdb,domain_name)
             begin
                 @resp = sdb.delete_domain(domain_name: @domain_name,)
+                flash[:success] = "@domain_name has been successful deleted."
             rescue Aws::SimpleDB::Errors::InvalidParameterValue
             #TODO add flash 
         end
@@ -69,6 +70,7 @@ class DomainController < ApplicationController
         @next_page_token = params[:next_page_token]
 
         if !check_seesion
+            flash[:warning] = "Sorry! Please enter your AWS credential."
             redirect_to controller: :home, action: :index
         else
             @simpledb = Aws::SimpleDB::Client.new(
@@ -97,10 +99,7 @@ class DomainController < ApplicationController
             if !@session_state
                 redirect_to controller: :home, action: :index
             else
-                @simpledb = Aws::SimpleDB::Client.new(
-                    :access_key_id => @aws_key_id,
-                    :secret_access_key => @aws_key,
-                    :region => 'eu-west-1')
+
                 metadata_domain(@simpledb,@domain_name)
             end
         end
